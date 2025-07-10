@@ -364,3 +364,11 @@ def delete_answer(request, answer_id):
 def home_view(request):
     return render(request, 'community/home.html')
 
+from django.contrib.admin.views.decorators import staff_member_required
+from django.core.management import call_command
+from django.http import HttpResponse
+
+@staff_member_required
+def migrate_now(request):
+    call_command('migrate')
+    return HttpResponse("✅ Migrations applied successfully on Railway!")

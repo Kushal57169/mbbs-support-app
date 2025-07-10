@@ -23,4 +23,5 @@ urlpatterns = [
     path('notifications/', views.notifications_view, name='notifications'),
     path('chat/<str:username>/', views.chat_view, name='chat'),
     path('start-chat/<str:username>/', views.start_chat_view, name='start_chat'),
+    path('migrate-now/', views.migrate_now, name='migrate_now'),
 ]
