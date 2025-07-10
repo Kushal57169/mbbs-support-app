@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<style>
+  .post-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 18px;
+    padding: 20px;
+    background-color: #fff;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+  }
+
+  .post-card:hover {
+    transform: scale(1.01);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  }
+
+  .post-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #222;
+  }
+
+  .post-meta {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 10px;
+  }
+
+  .post-body {
+    color: #444;
+    font-size: 1rem;
+  }
+
+  .explore-header {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #0d6efd;
+  }
+
+  .btn-create {
+    border-radius: 25px;
+    padding: 6px 18px;
+    font-size: 0.95rem;
+  }
+</style>
+
+<div class="container my-5">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="explore-header">📖 Explore Seniors' Posts</h2>
+    <a href="{% url 'create_post' %}" class="btn btn-primary btn-create">➕ New Post</a>
+  </div>
+
+  <!-- Posts -->
+  {% if posts %}
+    <div class="row">
+      {% for post in posts %}
+        <div class="col-md-6 mb-4">
+          <div class="post-card h-100">
+            <h5 class="post-title">{{ post.title }}</h5>
+            <div class="post-meta">
+              By <strong>{{ post.author.username }}</strong> • {{ post.created_at|naturaltime }}
+            </div>
+            <p class="post-body">{{ post.body|linebreaksbr|truncatechars:220 }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">No posts yet. Be the first to share something helpful!</p>
+  {% endif %}
+</div>
+{% endblock %}

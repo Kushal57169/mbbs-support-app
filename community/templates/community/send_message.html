@@ -1,0 +1,12 @@
+{% extends 'community/base.html' %}
+{% block title %}Send a Message{% endblock %}
+{% block content %}
+
+<h2 class="mb-3">Send a Private Message</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Send</button>
+</form>
+
+{% endblock %}

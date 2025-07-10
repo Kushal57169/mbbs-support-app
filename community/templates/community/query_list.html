@@ -1,0 +1,119 @@
+{% extends 'community/base.html' %}
+{% load humanize %}
+{% block title %}All Queries{% endblock %}
+
+{% block content %}
+<style>
+  .query-card {
+    border: none;
+    border-radius: 18px;
+    background: white;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .query-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  }
+
+  .query-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    text-decoration: none;
+  }
+
+  .query-title:hover {
+    color: #0d6efd;
+    text-decoration: underline;
+  }
+
+  .query-meta {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-top: 6px;
+  }
+
+  .query-body {
+    color: #444;
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+
+  .filter-toggle {
+    border-radius: 30px;
+    padding: 6px 16px;
+    font-size: 0.85rem;
+  }
+
+  .page-title {
+    font-weight: 700;
+    color: #004080;
+  }
+
+  .author-link {
+    font-weight: 600;
+    color: #0d6efd;
+    text-decoration: none;
+  }
+
+  .author-link:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<div class="container my-4">
+
+  <!-- Title and College Filter Toggle -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="page-title">
+      {% if showing_all %}
+        🌍 All Colleges' Queries
+      {% else %}
+        🏥 Queries from {{ request.user.college }}
+      {% endif %}
+    </h3>
+    <div>
+      {% if showing_all %}
+        <a href="{% url 'query_list' %}" class="btn btn-outline-primary filter-toggle">Show My College</a>
+      {% else %}
+        <a href="{% url 'query_list' %}?all=1" class="btn btn-outline-secondary filter-toggle">Show All Colleges</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Query Cards -->
+  {% for query in queries %}
+    <div class="query-card">
+      <div class="d-flex justify-content-between">
+        <a href="{% url 'query_detail' query.id %}" class="query-title">{{ query.title }}</a>
+        {% if request.user == query.author %}
+          <form method="post" action="{% url 'delete_query' query.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-danger">🗑️</button>
+          </form>
+        {% endif %}
+      </div>
+      <div class="query-meta">
+        Posted by:
+        {% if query.is_anonymous %}
+          <span class="fw-semibold text-dark">Anonymous</span>
+        {% else %}
+          <a href="{% url 'user_profile' query.author.username %}" class="author-link">
+            {{ query.author.username }}
+          </a>
+        {% endif %}
+        • {{ query.created_at|naturaltime }}
+      </div>
+      <div class="query-body">
+        {{ query.body|truncatewords:30 }}
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted">No queries found.</p>
+  {% endfor %}
+</div>
+{% endblock %}

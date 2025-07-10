@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<style>
+  .search-bar {
+    border-radius: 30px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+
+  .search-btn {
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: 0.2s;
+  }
+
+  .search-btn:hover {
+    background-color: #003366;
+    color: white;
+  }
+
+  .result-card {
+    border: 1px solid #eee;
+    border-radius: 16px;
+    padding: 20px;
+    background-color: #fff;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .result-card:hover {
+    box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+  }
+
+  .user-card {
+    border-radius: 14px;
+    background-color: #f8f9fc;
+    padding: 15px 20px;
+    transition: transform 0.2s;
+  }
+
+  .user-card:hover {
+    transform: translateY(-3px);
+    background-color: #e9f3ff;
+  }
+
+  .section-title {
+    margin-top: 40px;
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: #0d6efd;
+  }
+</style>
+
+<div class="container py-4">
+  <h3 class="mb-4">🔎 Search Results for: <em class="text-primary">{{ query }}</em></h3>
+
+  <!-- 🔍 Search Bar -->
+  <form method="get" action="{% url 'search' %}" class="d-flex mb-4">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search queries or users..." class="form-control me-2 search-bar">
+    <button type="submit" class="btn btn-primary search-btn">Search</button>
+  </form>
+
+  <!-- 📝 Queries Section -->
+  <h5 class="section-title">📝 Matching Queries</h5>
+  {% if query_results %}
+    {% for q in query_results %}
+      <div class="result-card mb-3">
+        <h5><a href="{% url 'query_detail' q.id %}" class="text-decoration-none text-dark">{{ q.title }}</a></h5>
+        <p class="text-muted small mb-1">{{ q.body|truncatechars:100 }}</p>
+        <p class="text-muted small">By <strong>{{ q.author.username }}</strong> • {{ q.created_at|naturaltime }}</p>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-muted">No queries found.</p>
+  {% endif %}
+
+  <!-- 👤 Users Section -->
+  <h5 class="section-title">👤 Matching Users</h5>
+  {% if user_results %}
+    {% for u in user_results %}
+      <div class="user-card mb-2">
+        <a href="{% url 'user_profile' u.username %}" class="fw-semibold text-dark text-decoration-none">
+          {{ u.username }}
+        </a> <span class="text-muted">— {{ u.role }} | {{ u.college }}</span>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-muted">No users found.</p>
+  {% endif %}
+</div>
+{% endblock %}

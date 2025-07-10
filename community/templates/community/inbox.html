@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<style>
+  .inbox-heading {
+    font-weight: 700;
+    font-size: 2rem;
+    color: #004080;
+  }
+
+  .chat-card {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    padding: 16px 20px;
+  }
+
+  .chat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    background-color: #f9fbff;
+  }
+
+  .chat-avatar {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 2px #dbeafe;
+  }
+
+  .chat-username {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #004080;
+  }
+
+  .chat-snippet {
+    font-size: 0.9rem;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  .chat-time {
+    font-size: 0.75rem;
+    color: #999;
+    white-space: nowrap;
+  }
+
+  .empty-message {
+    font-size: 1.1rem;
+    text-align: center;
+    color: #666;
+    margin-top: 100px;
+  }
+
+  .chat-link {
+    text-decoration: none;
+  }
+</style>
+
+<div class="container mt-5">
+  <h2 class="mb-4 inbox-heading">📥 Your Inbox</h2>
+
+  {% if inbox_data %}
+    <div class="row">
+      {% for chat in inbox_data %}
+        <div class="col-sm-12 col-md-6 col-lg-4 mb-4">
+          <a href="{% url 'chat_view' chat.user.username %}" class="chat-link">
+            <div class="chat-card">
+              <div class="d-flex align-items-center gap-3">
+                <img src="{{ chat.user.profile_picture.url }}" alt="{{ chat.user.username }}" class="chat-avatar">
+                <div class="flex-grow-1">
+                  <div class="chat-username">{{ chat.user.username }}</div>
+                  <div class="chat-snippet">
+                    {{ chat.last_message|default:"No messages yet" }}
+                  </div>
+                </div>
+                <div class="chat-time text-end">{{ chat.timestamp|naturaltime }}</div>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-message">No conversations yet. Start connecting with someone!</div>
+  {% endif %}
+</div>
+{% endblock %}

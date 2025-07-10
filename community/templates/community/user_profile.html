@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<style>
+    .profile-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+        text-align: center;
+    }
+    .profile-img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid #007bff;
+    }
+    .profile-stats {
+        font-weight: 500;
+        margin-top: 0.5rem;
+    }
+    .follow-btn {
+        border-radius: 20px;
+        padding: 6px 20px;
+        font-weight: 500;
+    }
+    .tab-card {
+        border-radius: 16px;
+        background-color: #f8f9fa;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1rem;
+        transition: 0.3s;
+    }
+    .tab-card:hover {
+        background-color: #e9f5ff;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+    }
+</style>
+
+<div class="container py-5">
+
+    <!-- 👤 Profile Section -->
+    <div class="profile-card mb-4">
+        <img src="{{ user_profile.profile_picture.url }}" class="profile-img mb-3" alt="Profile Picture">
+        <h3 class="fw-bold mb-1">{{ user_profile.username }}</h3>
+        <p class="text-muted mb-2">{{ user_profile.role }} | {{ user_profile.college }}</p>
+
+        {% if request.user != user_profile %}
+            <form action="{% url 'follow_user' user_profile.id %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit"
+                        class="btn {% if is_following %}btn-danger{% else %}btn-primary{% endif %} follow-btn">
+                    {% if is_following %}Unfollow{% else %}Follow{% endif %}
+                </button>
+            </form>
+        {% endif %}
+
+        <div class="profile-stats text-muted mt-3">
+            <strong>{{ followers.count }}</strong> Followers |
+            <strong>{{ following.count }}</strong> Following
+        </div>
+    </div>
+
+    <!-- 🔘 Tabs -->
+     
+    <ul class="nav nav-pills justify-content-center mb-4 gap-2">
+        <li class="nav-item">
+            <a class="nav-link {% if tab == 'queries' %}active{% endif %}" href="?tab=queries">📝 Queries</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if tab == 'answers' %}active{% endif %}" href="?tab=answers">💬 Answers</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if tab == 'followers' %}active{% endif %}" href="?tab=followers">👥 Followers</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if tab == 'following' %}active{% endif %}" href="?tab=following">🔗 Following</a>
+        </li>
+    </ul>
+
+    <!-- 🧾 Tab Content -->
+    <div class="tab-content">
+        {% if tab == 'queries' %}
+            {% for q in queries %}
+                <div class="tab-card">
+                    <h5 class="fw-bold mb-1">{{ q.title }}</h5>
+                    <p class="text-muted small mb-0">Posted {{ q.created_at|naturaltime }}</p>
+                </div>
+            {% empty %}
+                <p class="text-muted">No queries posted yet.</p>
+            {% endfor %}
+
+        {% elif tab == 'answers' %}
+            {% for a in answers %}
+                <div class="tab-card">
+                    <p class="mb-1">{{ a.body|truncatechars:120 }}</p>
+                    <p class="text-muted small mb-0">On: <strong>{{ a.query.title }}</strong></p>
+                </div>
+            {% empty %}
+                <p class="text-muted">No answers given yet.</p>
+            {% endfor %}
+
+        {% elif tab == 'followers' %}
+            {% for f in followers %}
+                <div class="tab-card">
+                    <a href="{% url 'user_profile' f.user.username %}" class="fw-semibold text-decoration-none">
+                        {{ f.user.username }}
+                    </a>
+                </div>
+            {% empty %}
+                <p class="text-muted">No followers yet.</p>
+            {% endfor %}
+
+        {% elif tab == 'following' %}
+            {% for f in following %}
+                <div class="tab-card">
+                    <a href="{% url 'user_profile' f.user.username %}" class="fw-semibold text-decoration-none">
+                        {{ f.user.username }}
+                    </a>
+                </div>
+            {% empty %}
+                <p class="text-muted">Not following anyone yet.</p>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 800px;">
+    <h3 class="mb-3 fw-bold text-primary text-center">
+        💬 Chat with {{ other_user.username }}
+    </h3>
+
+    <!-- Dark Mode Toggle -->
+    <div class="text-center mb-3">
+        <button id="darkModeToggle" class="btn btn-outline-secondary btn-sm">
+            🌙 Toggle Dark Mode
+        </button>
+    </div>
+
+    <!-- Typing indicator -->
+    <p id="typing-status" class="text-muted small text-center mb-2" style="min-height: 20px;"></p>
+
+    <!-- Chat Messages -->
+    <div id="chatBox" class="bg-light p-3 rounded-4 shadow-sm overflow-auto" style="height: 60vh;">
+        {% for message in messages %}
+            {% if message.sender == request.user %}
+                <div class="d-flex justify-content-end mb-3 position-relative">
+                    <div class="bg-primary text-white rounded-4 p-3 shadow-sm" style="max-width: 70%;">
+                        <div class="fw-medium">{{ message.content }}</div>
+                        <div class="text-end small mt-1">{{ message.timestamp|time:"H:i" }}</div>
+                    </div>
+                    <form method="post" action="{% url 'delete_message' message.id %}" style="margin-left: 6px; align-self: center;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-light border-0" title="Delete">🗑️</button>
+                    </form>
+                </div>
+            {% else %}
+                <div class="d-flex justify-content-start mb-3">
+                    <div class="bg-white text-dark rounded-4 p-3 shadow-sm border" style="max-width: 70%;">
+                        <div class="fw-medium">{{ message.content|linebreaksbr }}</div>
+                        <div class="text-end small text-muted mt-1">{{ message.timestamp|time:"H:i" }}</div>
+                    </div>
+                </div>
+            {% endif %}
+        {% empty %}
+            <p class="text-muted text-center">No messages yet. Say hello!</p>
+        {% endfor %}
+    </div>
+
+    <!-- Message Form -->
+    <form method="post" class="mt-4 d-flex align-items-start gap-2 flex-column flex-md-row">
+        {% csrf_token %}
+        <div class="flex-grow-1 w-100">
+            <textarea id="chat-input" name="content" rows="2" required
+                      placeholder="Type a message..."
+                      class="form-control rounded-3 shadow-sm px-3 py-2 w-100"></textarea>
+        </div>
+
+        <div class="d-flex gap-2 mt-2 mt-md-0">
+            <button type="button" id="emoji-button" class="btn btn-light rounded-circle shadow-sm" title="Insert emoji">😊</button>
+            <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">Send</button>
+        </div>
+    </form>
+</div>
+
+<!-- Emoji Picker Script -->
+<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js"></script>
+<script>
+    const chatBox = document.getElementById('chatBox');
+    const input = document.getElementById('chat-input');
+    const typingStatus = document.getElementById('typing-status');
+    const emojiButton = document.getElementById('emoji-button');
+
+    // ✅ Auto-scroll
+    window.onload = () => {
+        chatBox.scrollTop = chatBox.scrollHeight;
+    };
+
+    // ✅ Typing indicator
+    let typingTimeout;
+    input.addEventListener('input', () => {
+        typingStatus.innerText = "You are typing...";
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => typingStatus.innerText = "", 1500);
+    });
+
+    // ✅ Emoji picker with insert-at-cursor
+    const picker = new EmojiButton({
+        position: 'top-end',
+        theme: 'auto',
+        showRecents: true,
+        zIndex: 99999,
+    });
+
+    picker.on('emoji', emoji => {
+        const start = input.selectionStart;
+        const end = input.selectionEnd;
+        const text = input.value;
+        input.value = text.slice(0, start) + emoji + text.slice(end);
+        input.selectionStart = input.selectionEnd = start + emoji.length;
+        input.focus();
+    });
+
+    emojiButton.addEventListener('click', () => {
+        picker.togglePicker(emojiButton);
+    });
+
+    // ✅ Close picker on outside click
+    document.addEventListener('click', (e) => {
+        if (!emojiButton.contains(e.target) && !document.querySelector('.emoji-picker')?.contains(e.target)) {
+            picker.hidePicker();
+        }
+    });
+
+    // ✅ Dark mode toggle
+    const toggleBtn = document.getElementById('darkModeToggle');
+    toggleBtn.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    // ✅ Apply saved dark mode
+    if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+    }
+</script>
+{% endblock %}

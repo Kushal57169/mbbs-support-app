@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4 fw-bold text-primary">🗂️ My Posted Queries</h2>
+
+    {% if queries %}
+        <div class="row g-4">
+            {% for query in queries %}
+                <div class="col-md-6">
+                    <div class="card shadow-sm rounded-4 border-0 h-100 hover-shadow transition">
+                        <div class="card-body">
+                            <h5 class="card-title fw-semibold text-primary mb-2">
+                                <a href="{% url 'query_detail' query.id %}" class="text-decoration-none text-primary">
+                                    {{ query.title }}
+                                </a>
+                            </h5>
+                            <p class="card-text text-muted small mb-2">
+                                {{ query.created_at|naturaltime }}
+                            </p>
+                            <p class="card-text text-dark">
+                                {{ query.body|truncatechars:120 }}
+                            </p>
+                            <a href="{% url 'query_detail' query.id %}" class="btn btn-outline-primary btn-sm rounded-pill mt-2">🔍 View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-4 rounded-3 shadow-sm">
+            You haven’t posted any queries yet.
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+    .transition {
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}

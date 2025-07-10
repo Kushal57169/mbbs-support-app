@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="container py-5">
+    <div class="mx-auto" style="max-width: 700px;">
+        <div class="card shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <h3 class="mb-4 text-primary fw-bold">📝 Create a New Post</h3>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">Title</label>
+                        {{ form.title|add_class:"form-control rounded-pill shadow-sm" }}
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="{{ form.body.id_for_label }}" class="form-label fw-semibold">Content</label>
+                        {{ form.body|add_class:"form-control rounded-4 shadow-sm" }}
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 shadow">
+                            ➕ Post
+                        </button>
+                        <a href="{% url 'explore' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
