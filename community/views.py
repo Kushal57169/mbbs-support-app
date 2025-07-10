@@ -372,3 +372,18 @@ from django.http import HttpResponse
 def migrate_now(request):
     call_command('migrate')
     return HttpResponse("✅ Migrations applied successfully on Railway!")
+
+from django.core.management import call_command
+from django.http import HttpResponse
+import os
+
+def load_fixture_view(request):
+    if not request.user.is_superuser:
+        return HttpResponse("Unauthorized", status=401)
+    
+    try:
+        fixture_path = os.path.join(os.path.dirname(__file__), 'data.json')
+        call_command('loaddata', fixture_path)
+        return HttpResponse("✅ Data loaded successfully!")
+    except Exception as e:
+        return HttpResponse(f"❌ Error: {str(e)}")

@@ -24,4 +24,6 @@ urlpatterns = [
     path('chat/<str:username>/', views.chat_view, name='chat'),
     path('start-chat/<str:username>/', views.start_chat_view, name='start_chat'),
     path('migrate-now/', views.migrate_now, name='migrate_now'),
+    path('load-data/', views.load_fixture_view, name='load_fixture'),
+
 ]
