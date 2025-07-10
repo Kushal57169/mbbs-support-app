@@ -2,6 +2,7 @@ from django.urls import path
 from . import views  # ✅ Import the views module
 
 urlpatterns = [
+    path('', views.home_view, name='home'),
     path('register/', views.register_view, name='register'),
     path('post/', views.create_query, name='create_query'),
     path('queries/', views.query_list, name='query_list'),
@@ -14,7 +15,7 @@ urlpatterns = [
     path('query/<int:query_id>/delete/', views.delete_query, name='delete_query'),
     path('profile/<str:username>/', views.user_profile_view, name='user_profile'), 
     path('message/<int:message_id>/delete/', views.delete_message, name='delete_message'),
-    path('answer/<int:answer_id>/delete/', views.delete_answer, name='delete_answer'),  # ✅ Added
+    path('answer/<int:answer_id>/delete/', views.delete_answer, name='delete_answer'),  
     path('my-queries/', views.my_queries_view, name='my_queries'),
     path('search/', views.search_view, name='search'),
     path('explore/', views.explore_view, name='explore'),

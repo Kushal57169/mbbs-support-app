@@ -139,4 +139,13 @@ LOGIN_REDIRECT_URL = '/dashboard/'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
+# Static files (CSS, JavaScript, Images)
+import os
 
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'community/static'),
+]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

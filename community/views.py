@@ -359,3 +359,8 @@ def delete_answer(request, answer_id):
     answer.delete()
 
     return redirect('query_detail', query_id=query_id)
+
+# ------------------ HOMEPAGE ------------------
+def home_view(request):
+    return render(request, 'community/home.html')
+

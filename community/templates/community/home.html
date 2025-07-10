@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="text-center mt-5 pt-5">
+    <h1 class="display-4 fw-bold">👨‍⚕️ Welcome to MBBS Support</h1>
+    <p class="lead">Helping MBBS students connect, share knowledge, and support each other.</p>
+
+    <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
+        <a href="{% url 'query_list' %}" class="btn btn-primary btn-lg shadow">📚 Browse Queries</a>
+        <a href="{% url 'create_query' %}" class="btn btn-outline-primary btn-lg shadow">✍️ Post a Query</a>
+        <a href="{% url 'explore' %}" class="btn btn-outline-secondary btn-lg shadow">🧭 Explore Blog</a>
+    </div>
+
+    <div class="mt-5">
+        <img src="{% static 'images/doctor-support.png' %}" alt="Doctor Support" width="200" class="img-fluid">
+    </div>
+
+    <div class="mt-4 text-muted small">
+        Page last updated: {{ now|naturaltime }}
+    </div>
+</div>
+{% endblock %}
