@@ -380,7 +380,6 @@ from django.http import HttpResponse
 import os
 from django.contrib.auth.decorators import user_passes_test
 
-@user_passes_test(lambda u: u.is_superuser)
 def load_fixture_view(request):
     try:
         fixture_path = os.path.join(os.path.dirname(__file__), 'data.json')
